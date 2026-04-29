@@ -100,6 +100,10 @@ ln -sf /etc/nginx/sites-available/hr-directory /etc/nginx/sites-enabled/
 # Test de la configuration nginx
 nginx -t
 
+# Recharger nginx pour prendre en compte la nouvelle configuration
+echo "Redémarrage de nginx..."
+systemctl restart nginx
+
 # Création du service systemd pour l'application Flask
 echo "Création du service systemd..."
 cat > /etc/systemd/system/hr-directory.service << 'EOF'
