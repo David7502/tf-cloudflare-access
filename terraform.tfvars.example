@@ -5,9 +5,10 @@
 # ID du projet GCP (obligatoire)
 project_id = "ton-projet-gcp"
 
-# Votre IP publique pour l'accès SSH (obligatoire)
-# Trouvez-la sur https://www.whatismyip.com/
-my_ip = "1.2.3.4"
+# Votre IP publique pour restreindre l'accès SSH (optionnel)
+# Par défaut: 0.0.0.0/0 (SSH ouvert à toutes les IP - moins sécurisé mais pratique)
+# Pour plus de sécurité, spécifiez votre IP: trouvez-la sur https://www.whatismyip.com/
+# my_ip = "1.2.3.4"
 
 # Clé SSH publique (obligatoire)
 # Générez-la avec : ssh-keygen -t ed25519 -C "david@mac"

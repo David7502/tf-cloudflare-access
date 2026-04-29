@@ -64,6 +64,7 @@ variable "ssh_public_key" {
 }
 
 variable "my_ip" {
-  description = "Votre adresse IP publique (pour l'accès SSH)"
+  description = "Votre adresse IP publique pour restreindre l'accès SSH (défaut: 0.0.0.0/0 = toutes les IP)"
   type        = string
+  default     = "0.0.0.0/0"
 }
