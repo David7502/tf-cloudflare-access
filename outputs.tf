@@ -3,6 +3,9 @@
 # ============================================
 
 locals {
+  # Vérification si le tunnel est configuré (évite de référencer la variable sensible directement dans les outputs)
+  has_tunnel_token = length(var.cloudflare_tunnel_token) > 0
+
   next_steps_auto = <<-EOT
 
     ============================================
@@ -80,10 +83,10 @@ output "ssh_command" {
 
 output "tunnel_configured" {
   description = "Indique si le tunnel Cloudflare est auto-configuré"
-  value       = var.cloudflare_tunnel_token != "" ? "OUI - Tunnel auto-configuré" : "NON - Configuration manuelle requise"
+  value       = local.has_tunnel_token ? "OUI - Tunnel auto-configuré" : "NON - Configuration manuelle requise"
 }
 
 output "next_steps" {
   description = "Instructions post-déploiement"
-  value       = var.cloudflare_tunnel_token != "" ? local.next_steps_auto : local.next_steps_manual
+  value       = local.has_tunnel_token ? local.next_steps_auto : local.next_steps_manual
 }
