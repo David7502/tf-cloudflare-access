@@ -140,6 +140,12 @@ EOF
 echo "Configuration des permissions..."
 chown -R www-data:www-data /opt/hr-directory
 
+# Création des fichiers de log avec les bonnes permissions
+echo "Configuration des logs..."
+touch /var/log/hr-directory-access.log /var/log/hr-directory-error.log
+chown www-data:www-data /var/log/hr-directory-access.log /var/log/hr-directory-error.log
+chmod 644 /var/log/hr-directory-access.log /var/log/hr-directory-error.log
+
 # Rechargement systemd
 systemctl daemon-reload
 

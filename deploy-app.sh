@@ -79,6 +79,11 @@ ssh -o StrictHostKeyChecking=no "${SSH_USER}@${VM_IP}" << EOF
     sudo chown -R www-data:www-data ${APP_DIR}
     sudo chmod -R 755 ${APP_DIR}
     
+    echo "Configuration des fichiers de log..."
+    sudo touch /var/log/hr-directory-access.log /var/log/hr-directory-error.log
+    sudo chown www-data:www-data /var/log/hr-directory-access.log /var/log/hr-directory-error.log
+    sudo chmod 644 /var/log/hr-directory-access.log /var/log/hr-directory-error.log
+    
     echo "Création de l'environnement virtuel Python..."
     cd ${APP_DIR}
     sudo python3 -m venv venv
