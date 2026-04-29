@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}{{ employee.first_name }} {{ employee.last_name }} - HR Directory{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active">Employee Details</li>
+            </ol>
+        </nav>
+
+        <!-- Employee Card -->
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">
+                        <i class="bi bi-person-vcard me-2"></i>Employee Profile
+                    </h3>
+                    <span class="badge bg-light text-primary fs-6">
+                        #{{ employee.id }}
+                    </span>
+                </div>
+            </div>
+            
+            <div class="card-body">
+                <div class="row">
+                    <!-- Avatar & Basic Info -->
+                    <div class="col-md-4 text-center border-end">
+                        <div class="avatar-circle-lg bg-primary text-white mx-auto mb-3">
+                            {{ employee.first_name[0] }}{{ employee.last_name[0] }}
+                        </div>
+                        <h4>{{ employee.first_name }} {{ employee.last_name }}</h4>
+                        <p class="text-muted">{{ employee.role }}</p>
+                        <span class="badge bg-secondary">{{ employee.department }}</span>
+                        
+                        <hr class="my-3">
+                        
+                        <div class="text-start">
+                            <p class="mb-2">
+                                <i class="bi bi-envelope me-2 text-primary"></i>
+                                <a href="mailto:{{ employee.email }}" class="text-decoration-none">
+                                    {{ employee.email }}
+                                </a>
+                            </p>
+                            <p class="mb-0">
+                                <i class="bi bi-geo-alt me-2 text-primary"></i>
+                                {{ employee.location }}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Detailed Info -->
+                    <div class="col-md-8">
+                        <h5 class="mb-3">
+                            <i class="bi bi-info-circle me-2"></i>Professional Information
+                        </h5>
+                        
+                        <table class="table table-borderless">
+                            <tr>
+                                <td class="text-muted" style="width: 30%">Department</td>
+                                <td>
+                                    <span class="badge bg-secondary">{{ employee.department }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Role</td>
+                                <td><strong>{{ employee.role }}</strong></td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Manager</td>
+                                <td>
+                                    {% if employee.manager %}
+                                        {{ employee.manager }}
+                                    {% else %}
+                                        <span class="text-muted">No manager (Executive level)</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Hire Date</td>
+                                <td>
+                                    <i class="bi bi-calendar me-1"></i>
+                                    {{ employee.hire_date }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Location</td>
+                                <td>
+                                    <i class="bi bi-geo-alt me-1"></i>
+                                    {{ employee.location }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Employee ID</td>
+                                <td><code>#{{ '%04d'|format(employee.id) }}</code></td>
+                            </tr>
+                        </table>
+                        
+                        <hr>
+                        
+                        <h5 class="mb-3">
+                            <i class="bi bi-diagram-3 me-2"></i>Organization
+                        </h5>
+                        
+                        <div class="org-chart">
+                            {% if employee.manager %}
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="org-line"></div>
+                                <div class="org-node">
+                                    <i class="bi bi-person-check me-1"></i>
+                                    Reports to: <strong>{{ employee.manager }}</strong>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="alert alert-light">
+                                <i class="bi bi-star me-2"></i>
+                                Executive position - Reports to Board
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-footer bg-light">
+                <div class="d-flex justify-content-between">
+                    <a href="/" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i>Back to Directory
+                    </a>
+                    <button class="btn btn-outline-primary" onclick="window.print()">
+                        <i class="bi bi-printer me-1"></i>Print Profile
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

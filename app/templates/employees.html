@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Employee Directory - HR Directory{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="display-5">
+            <i class="bi bi-people-fill text-primary me-3"></i>Employee Directory
+        </h1>
+        <p class="lead text-muted">
+            Browse our global team of {{ employees|length }} employees across {{ employees|map(attribute='location')|unique|list|length }} locations.
+        </p>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card text-center h-100 border-primary">
+            <div class="card-body">
+                <h2 class="card-title text-primary">{{ employees|length }}</h2>
+                <p class="card-text text-muted">Total Employees</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card text-center h-100 border-success">
+            <div class="card-body">
+                <h2 class="card-title text-success">{{ employees|map(attribute='department')|unique|list|length }}</h2>
+                <p class="card-text text-muted">Departments</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card text-center h-100 border-info">
+            <div class="card-body">
+                <h2 class="card-title text-info">{{ employees|map(attribute='location')|unique|list|length }}</h2>
+                <p class="card-text text-muted">Locations</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card text-center h-100 border-warning">
+            <div class="card-body">
+                <h2 class="card-title text-warning">4</h2>
+                <p class="card-text text-muted">Engineers</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Employees Table -->
+<div class="card shadow-sm">
+    <div class="card-header bg-white">
+        <h5 class="mb-0">
+            <i class="bi bi-list-ul me-2"></i>All Employees
+        </h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Role</th>
+                        <th>Manager</th>
+                        <th>Location</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for employee in employees %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-circle bg-primary text-white me-3">
+                                    {{ employee.first_name[0] }}{{ employee.last_name[0] }}
+                                </div>
+                                <div>
+                                    <strong>{{ employee.first_name }} {{ employee.last_name }}</strong>
+                                    <br>
+                                    <small class="text-muted">{{ employee.email }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary">{{ employee.department }}</span>
+                        </td>
+                        <td>{{ employee.role }}</td>
+                        <td>
+                            {% if employee.manager %}
+                                {{ employee.manager }}
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <i class="bi bi-geo-alt me-1 text-muted"></i>{{ employee.location }}
+                        </td>
+                        <td>
+                            <a href="/employee/{{ employee.id }}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye me-1"></i>View
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Info Alert -->
+<div class="alert alert-info mt-4" role="alert">
+    <i class="bi bi-info-circle-fill me-2"></i>
+    <strong>Zero Trust Security:</strong> This application is protected by Cloudflare Access. 
+    Your identity has been verified via Authentik before you could access this page.
+    <a href="/profile" class="alert-link">View your authentication details</a>.
+</div>
+{% endblock %}

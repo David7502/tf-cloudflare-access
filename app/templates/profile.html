@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile - HR Directory{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <h1 class="display-5 mb-4">
+            <i class="bi bi-shield-lock text-success me-3"></i>Authentication Profile
+        </h1>
+        
+        <p class="lead text-muted mb-4">
+            This page displays the authentication information provided by Cloudflare Access 
+            via JWT headers. This demonstrates how internal applications can rely on 
+            Cloudflare for identity verification.
+        </p>
+
+        <!-- Authentication Status -->
+        <div class="card mb-4 border-success">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-check-circle-fill me-2"></i>Authentication Status
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if user_email %}
+                <div class="alert alert-success mb-0">
+                    <i class="bi bi-shield-check me-2"></i>
+                    <strong>Authenticated</strong> via Cloudflare Access
+                </div>
+                {% else %}
+                <div class="alert alert-warning mb-0">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    <strong>Direct Access Detected</strong> - Not authenticated through Cloudflare Access
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- User Information from JWT -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-person-badge me-2"></i>Your Identity (from Cloudflare Access)
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if user_email %}
+                <table class="table table-borderless">
+                    <tr>
+                        <td class="text-muted" style="width: 30%">
+                            <i class="bi bi-envelope me-2"></i>Email
+                        </td>
+                        <td>
+                            <code class="fs-5">{{ user_email }}</code>
+                            <span class="badge bg-success ms-2">Verified</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">
+                            <i class="bi bi-fingerprint me-2"></i>User ID
+                        </td>
+                        <td>
+                            <code>{{ user_id or 'N/A' }}</code>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">
+                            <i class="bi bi-shield me-2"></i>IdP
+                        </td>
+                        <td>
+                            <span class="badge bg-info">Authentik</span>
+                            via Cloudflare Access
+                        </td>
+                    </tr>
+                </table>
+                {% else %}
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i>
+                    No Cloudflare Access headers detected. This is normal if you are accessing 
+                    the application directly via IP address without going through Cloudflare.
+                    <br><br>
+                    When accessed via <code>https://hr.dgcf.ovh</code>, this section will display 
+                    your authenticated identity from Authentik.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- JWT Headers -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-code-square me-2"></i>Cloudflare Access Headers
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if cf_headers %}
+                <p class="text-muted small mb-3">
+                    These headers are injected by Cloudflare Access after successful authentication:
+                </p>
+                <div class="bg-light p-3 rounded">
+                    <pre class="mb-0"><code>{% for key, value in cf_headers.items() %}{{ key }}: {{ value }}
+{% endfor %}</code></pre>
+                </div>
+                {% else %}
+                <div class="alert alert-secondary">
+                    <i class="bi bi-dash-circle me-2"></i>
+                    No CF-Access headers present in the request.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- How It Works -->
+        <div class="card border-info">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-lightbulb me-2"></i>How It Works
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Authentication Flow:</h6>
+                        <ol class="small">
+                            <li>User accesses <code>https://hr.dgcf.ovh</code></li>
+                            <li>Cloudflare Access intercepts the request</li>
+                            <li>User is redirected to Authentik for login</li>
+                            <li>After successful auth, Cloudflare adds JWT headers</li>
+                            <li>Request reaches this application with identity info</li>
+                            <li>App reads headers and personalizes experience</li>
+                        </ol>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Benefits:</h6>
+                        <ul class="small">
+                            <li>No login form in the application</li>
+                            <li>No password management in the app</li>
+                            <li>Centralized authentication via Authentik</li>
+                            <li>Additional policies (device, location, etc.)</li>
+                            <li>Audit logs in Cloudflare dashboard</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Debug Info (Collapsible) -->
+        <div class="mt-4">
+            <button class="btn btn-outline-secondary btn-sm" type="button" 
+                    data-bs-toggle="collapse" data-bs-target="#debugInfo">
+                <i class="bi bi-bug me-1"></i>Show All Headers (Debug)
+            </button>
+            
+            <div class="collapse mt-3" id="debugInfo">
+                <div class="card">
+                    <div class="card-header">
+                        All Request Headers
+                    </div>
+                    <div class="card-body">
+                        <div class="bg-light p-3 rounded" style="max-height: 400px; overflow-y: auto;">
+                            <pre class="mb-0 small"><code>{% for key, value in all_headers.items() %}{{ key }}: {{ value }}
+{% endfor %}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

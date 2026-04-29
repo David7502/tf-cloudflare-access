@@ -1,0 +1,20 @@
+# ============================================
+# Configuration - Cloudflare Access HR Directory
+# ============================================
+
+# ID du projet GCP (obligatoire)
+project_id = "ton-projet-gcp"
+
+# Votre IP publique pour l'accès SSH (obligatoire)
+# Trouvez-la sur https://www.whatismyip.com/
+my_ip = "1.2.3.4"
+
+# Clé SSH publique (obligatoire)
+# Générez-la avec : ssh-keygen -t ed25519 -C "david@mac"
+ssh_public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID... david@mac"
+
+# Optionnel : personnalisez les noms si nécessaire
+# access_instance_name = "vm-access-hr-directory"
+# access_vpc_name = "access-vpc"
+# access_subnet_name = "access-subnet"
+# access_firewall_name = "access-allow-ssh"
