@@ -84,9 +84,11 @@ output "ssh_command" {
 output "tunnel_configured" {
   description = "Indique si le tunnel Cloudflare est auto-configuré"
   value       = local.has_tunnel_token ? "OUI - Tunnel auto-configuré" : "NON - Configuration manuelle requise"
+  sensitive   = true
 }
 
 output "next_steps" {
   description = "Instructions post-déploiement"
   value       = local.has_tunnel_token ? local.next_steps_auto : local.next_steps_manual
+  sensitive   = true
 }
