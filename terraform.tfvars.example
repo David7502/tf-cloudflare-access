@@ -14,6 +14,13 @@ project_id = "ton-projet-gcp"
 # Générez-la avec : ssh-keygen -t ed25519 -C "david@mac"
 ssh_public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID... david@mac"
 
+# Token du tunnel Cloudflare (optionnel mais recommandé)
+# Permet la configuration automatique du tunnel sans connexion SSH
+# 1. Créez un tunnel dans Cloudflare One: https://one.dash.cloudflare.com → Networks → Tunnels
+# 2. Nommez-le: "hr-directory-tunnel"
+# 3. Copiez le token fourni et collez-le ici:
+# cloudflare_tunnel_token = "eyJhY2NvdW50SUQiOiIxMjM0NTY3ODkiLCJ0dW5uZWxJRCI6ImFiY2QtZWZnaCIsInNlY3JldCI6Inh4eHh4eCJ9"
+
 # Optionnel : personnalisez les noms si nécessaire
 # access_instance_name = "vm-access-hr-directory"
 # access_vpc_name = "access-vpc"

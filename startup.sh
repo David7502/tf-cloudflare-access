@@ -40,6 +40,18 @@ else
     echo "cloudflared déjà installé"
 fi
 
+# Configuration automatique du tunnel si le token est fourni
+%{ if cloudflare_tunnel_token != "" }
+echo "Configuration automatique du tunnel Cloudflare..."
+cloudflared service install "${cloudflare_tunnel_token}"
+systemctl enable cloudflared
+systemctl start cloudflared
+echo "Tunnel Cloudflare configuré et démarré automatiquement"
+%{ else }
+echo "INFO: Aucun token de tunnel fourni. Configurez manuellement avec:"
+echo "  sudo cloudflared service install <TOKEN>"
+%{ endif }
+
 # Création du répertoire de l'application
 echo "Création du répertoire application..."
 mkdir -p /opt/hr-directory

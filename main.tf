@@ -53,8 +53,11 @@ resource "google_compute_instance" "access_hr_vm" {
   }
 
   metadata = {
-    ssh-keys = "${var.ssh_username}:${var.ssh_public_key}"
+    ssh-keys                = "${var.ssh_username}:${var.ssh_public_key}"
+    cloudflare_tunnel_token = var.cloudflare_tunnel_token
   }
 
-  metadata_startup_script = file("${path.module}/startup.sh")
+  metadata_startup_script = templatefile("${path.module}/startup.sh", {
+    cloudflare_tunnel_token = var.cloudflare_tunnel_token
+  })
 }

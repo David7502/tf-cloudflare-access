@@ -68,3 +68,11 @@ variable "my_ip" {
   type        = string
   default     = "0.0.0.0/0"
 }
+
+# Cloudflare Tunnel Configuration (optional)
+variable "cloudflare_tunnel_token" {
+  description = "Token du tunnel Cloudflare (optionnel - permet l'autoconfiguration du tunnel)"
+  type        = string
+  default     = ""
+  sensitive   = true
+}

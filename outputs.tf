@@ -2,6 +2,67 @@
 # Outputs - Cloudflare Access HR Directory
 # ============================================
 
+locals {
+  next_steps_auto = <<-EOT
+
+    ============================================
+    DÉPLOIEMENT TERRAFORM TERMINÉ ✨
+    ============================================
+
+    🚀 TUNNEL AUTO-CONFIGURÉ !
+    
+    1. Attendez que l'installation se termine (5-10 min)
+       Vérifiez: ssh ${var.ssh_username}@${google_compute_instance.access_hr_vm.network_interface[0].access_config[0].nat_ip} "sudo tail /var/log/startup-script.log"
+
+    2. Déployez l'application:
+       ./deploy-app.sh ${google_compute_instance.access_hr_vm.network_interface[0].access_config[0].nat_ip}
+
+    3. Ajoutez une Public Hostname dans Cloudflare One:
+       - Subdomain: hr
+       - Domain: dgcf.ovh
+       - Type: HTTP
+       - URL: localhost:80
+
+    4. Créez une application Access:
+       https://one.dash.cloudflare.com → Access → Applications
+       - Domain: hr.dgcf.ovh
+       - IdP: Authentik
+
+    5. Testez: https://hr.dgcf.ovh
+
+    ============================================
+  EOT
+
+  next_steps_manual = <<-EOT
+
+    ============================================
+    DÉPLOIEMENT TERRAFORM TERMINÉ
+    ============================================
+
+    1. Attendez que l'installation se termine (5-10 min)
+       Vérifiez: ssh ${var.ssh_username}@${google_compute_instance.access_hr_vm.network_interface[0].access_config[0].nat_ip} "sudo tail /var/log/startup-script.log"
+
+    2. Déployez l'application:
+       ./deploy-app.sh ${google_compute_instance.access_hr_vm.network_interface[0].access_config[0].nat_ip}
+
+    3. Créez un tunnel dans Cloudflare One:
+       https://one.dash.cloudflare.com → Networks → Tunnels
+       Nom: hr-directory-tunnel
+
+    4. Installez le token sur la VM:
+       ssh ${var.ssh_username}@${google_compute_instance.access_hr_vm.network_interface[0].access_config[0].nat_ip}
+       sudo cloudflared service install <TOKEN>
+
+    5. Ajoutez une Public Hostname et créez une application Access
+
+    6. Testez: https://hr.dgcf.ovh
+
+    💡 ASTUCE: Pour éviter l'étape 4, ajoutez cloudflare_tunnel_token dans terraform.tfvars
+
+    ============================================
+  EOT
+}
+
 output "access_instance_ip" {
   description = "IP publique de la VM HR Directory"
   value       = google_compute_instance.access_hr_vm.network_interface[0].access_config[0].nat_ip
@@ -17,46 +78,12 @@ output "ssh_command" {
   value       = "ssh ${var.ssh_username}@${google_compute_instance.access_hr_vm.network_interface[0].access_config[0].nat_ip}"
 }
 
+output "tunnel_configured" {
+  description = "Indique si le tunnel Cloudflare est auto-configuré"
+  value       = var.cloudflare_tunnel_token != "" ? "OUI - Tunnel auto-configuré" : "NON - Configuration manuelle requise"
+}
+
 output "next_steps" {
   description = "Instructions post-déploiement"
-  value       = <<-EOT
-
-    ============================================
-    DÉPLOIEMENT TERRAFORM TERMINÉ
-    ============================================
-
-    1. Attendez que l'installation automatique se termine (5-10 min)
-       Vérifiez avec : ssh ${var.ssh_username}@${google_compute_instance.access_hr_vm.network_interface[0].access_config[0].nat_ip} "sudo tail -f /var/log/syslog | grep startup-script"
-
-    2. Déployez les fichiers de l'application :
-       ./deploy-app.sh ${google_compute_instance.access_hr_vm.network_interface[0].access_config[0].nat_ip}
-
-    3. Configurez Cloudflare Access :
-
-       a. Créez un tunnel dans Cloudflare One :
-          https://one.dash.cloudflare.com → Networks → Tunnels → Create a tunnel
-          Nom : hr-directory-tunnel
-
-       b. Copiez le token, puis sur la VM :
-          ssh ${var.ssh_username}@${google_compute_instance.access_hr_vm.network_interface[0].access_config[0].nat_ip}
-          sudo cloudflared service install <TOKEN>
-
-       c. Ajoutez une Public Hostname :
-          - Subdomain: hr
-          - Domain: dgcf.ovh
-          - Type: HTTP
-          - URL: localhost:80
-
-       d. Créez une application Access :
-          https://one.dash.cloudflare.com → Access → Applications → Add an application
-          - Type: Self-hosted
-          - Name: HR Directory
-          - Domain: hr.dgcf.ovh
-          - IdP: Authentik (sélectionnez-le)
-          - Policy: Create Allow policy → Include → Email → votre email
-
-    4. Testez l'accès : https://hr.dgcf.ovh
-
-    ============================================
-  EOT
+  value       = var.cloudflare_tunnel_token != "" ? local.next_steps_auto : local.next_steps_manual
 }
